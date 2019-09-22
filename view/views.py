@@ -24,7 +24,8 @@ def entry():
     now = datetime.datetime.now()
     query = request.query_string.decode('UTF-8')
 
-    # with open('../entry.log', 'a') as f:
-    #    print('{0:%Y/%m/%d %h:%M:%s - }'.format(now), ip, '-', query, file=f)
+    # ログ出力
+    with open('entry.log', 'a') as f:
+        print('{0:%Y/%m/%d %H:%M:%S}-'.format(now), ip, '-', query, file=f)
 
     return send_from_directory('../static/image/', filename='1x1.gif')
