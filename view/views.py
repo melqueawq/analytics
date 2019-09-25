@@ -1,5 +1,6 @@
 from flask import request, render_template, url_for, send_from_directory
 from view import app
+from logging import getLogger, FileHandler, DEBUG
 import datetime
 
 
@@ -20,12 +21,16 @@ def entry_js():
 @app.route('/entry')
 def entry():
     ip = request.remote_addr
-    print('ip', ip)
-    now = datetime.datetime.now()
     query = request.query_string.decode('UTF-8')
 
+    # 時刻取得
+    now = datetime.datetime.now()
+
     # ログ出力
-    with open('entry.log', 'a') as f:
-        print('{0:%Y/%m/%d %H:%M:%S}-'.format(now), ip, '-', query, file=f)
+    logger = getLogger(__name__)
+    logger.setLevel(DEBUG)
+    fh = FileHandler('entry.log', 'a')
+    logger.addHandler(fh)
+    logger.info('{0:%Y/%m/%d %H:%M:%S} - '.format(now) + ip + ' - ' + query)
 
     return send_from_directory('../static/image/', filename='1x1.gif')
