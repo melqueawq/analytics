@@ -1,7 +1,9 @@
-from flask import request, render_template, url_for, send_from_directory
+from flask import request, render_template, url_for, send_file
 from view import app
 from logging import getLogger, FileHandler, DEBUG
 import datetime
+import base64
+import io
 
 
 @app.route('/')
@@ -33,4 +35,6 @@ def entry():
     logger.addHandler(fh)
     logger.info('{0:%Y/%m/%d %H:%M:%S} - '.format(now) + ip + ' - ' + query)
 
-    return send_from_directory('../static/image/', filename='1x1.gif')
+    gif = 'R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw =='
+    gif_str = base64.b64decode(gif)
+    return send_file(io.BytesIO(gif_str), mimetype='image/gif')
