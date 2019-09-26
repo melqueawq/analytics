@@ -1,6 +1,5 @@
-from flask import request, render_template, url_for, send_file
-from view import app
-from logging import getLogger, FileHandler, DEBUG
+from flask import request, render_template, send_file
+from view._app import app, getLogger
 import datetime
 import base64
 import io
@@ -17,22 +16,34 @@ def entry_js():
     filename = 'user_js/' + str(cid) + '.js'
     with open(filename, 'r') as f:
         js = f.read()
+
+        js += 'image.src = location.protocol + "//127.0.0.1:5000/entry?"' \
+            + ' + "cid=" + "1" + "&time=" + now.getTime()' \
+            + ' + "&url=" + window.location + "&ref=" + document.referrer'
+
+        if('p' in request.args):
+            js += '+ "&param=' + str(request.args.get('p')) + '"'
+
+        js += ";"
+
     return js
 
 
 @app.route('/entry')
 def entry():
     ip = request.remote_addr
-    query = request.query_string.decode('UTF-8')
+    query = ''
+    for a in request.args:
+        query += request.args.get(a) + '*'
+
+    if 'param' in request.args:
+        print(request.args.get('param'))
 
     # 時刻取得
     now = datetime.datetime.now()
 
     # ログ出力
-    logger = getLogger(__name__)
-    logger.setLevel(DEBUG)
-    fh = FileHandler('entry.log', 'a')
-    logger.addHandler(fh)
+    logger = getLogger(__name__, 'entry.log')
     logger.info('{0:%Y/%m/%d %H:%M:%S} - '.format(now) + ip + ' - ' + query)
 
     gif = 'R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw =='
