@@ -1,5 +1,5 @@
 from flask import request, render_template, send_file
-from view._app import app, getLogger
+from view._app import app, getLogger, conversion
 import datetime
 import base64
 import io
@@ -37,7 +37,7 @@ def entry():
         query += request.args.get(a) + '*'
 
     if 'param' in request.args:
-        print(request.args.get('param'))
+        conversion(request.args.get('param'))
 
     # 時刻取得
     now = datetime.datetime.now()

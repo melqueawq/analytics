@@ -23,3 +23,9 @@ def getLogger(name=__name__, filename=None):
     logger.addHandler(handler)
     loggers[name] = logger
     return logger
+
+
+def conversion(conv):
+    # jsonかdbでとる
+    logger = getLogger('conv', 'conv.log')
+    logger.info(conv)
