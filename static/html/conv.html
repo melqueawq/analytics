@@ -1,30 +1,28 @@
 <!DOCTYPE html>
 <html lang="ja">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>analytics</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <script type="text/javascript">
-        (function () {
-            let cid = 1;
-            let param = "cv:1";
-            let entry_js = "//127.0.0.1:5000/entry.js?cid=";
-            let protocol = window.location.protocol;
-            let tag = document.createElement("script");
-            tag.type = "text/javascript";
-            tag.async = true;
-            tag.src = protocol + entry_js + cid + "&p={" + param + "}";
-            if (protocol == "http:" || protocol == "https:") {
-                var firstTag = document.getElementsByTagName("script")[0];
-                firstTag.parentNode.insertBefore(tag, firstTag);
-            }
-        })();
+      (function() {
+        let cid = 1;
+        let param = "cv01";
+        let entry_js = "//127.0.0.1:5000/entry.js?cid=";
+        let protocol = window.location.protocol;
+        let tag = document.createElement("script");
+        tag.type = "text/javascript";
+        tag.async = true;
+        tag.src = protocol + entry_js + cid + "&p=" + param;
+        if (protocol == "http:" || protocol == "https:") {
+          var firstTag = document.getElementsByTagName("script")[0];
+          firstTag.parentNode.insertBefore(tag, firstTag);
+        }
+      })();
     </script>
-</body>
-
+  </body>
 </html>

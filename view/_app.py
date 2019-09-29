@@ -1,5 +1,7 @@
 from flask import Flask
 import logging
+import json
+import os
 
 app = Flask(__name__, template_folder='../templates',
             static_folder="../static")
@@ -27,5 +29,15 @@ def getLogger(name=__name__, filename=None):
 
 def conversion(conv):
     # jsonかdbでとる
-    logger = getLogger('conv', 'conv.log')
-    logger.info(conv)
+    cvdata = {}
+    if os.path.exists("conversion.json"):
+        with open("conversion.json", 'r') as f:
+            cvdata = json.load(f)
+
+    if conv in cvdata:
+        cvdata[conv] += 1
+    else:
+        cvdata[conv] = 1
+
+    with open("conversion.json", 'w') as f:
+        json.dump(cvdata, f)
