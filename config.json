@@ -1,5 +1,3 @@
 {
-    "ignorepage": {
-        "ignore": "prefix"
-    }
+  "ignorepage": ["/static/html/ignore.html"]
 }

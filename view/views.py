@@ -1,9 +1,13 @@
+#!/usr/bin/env python
+# -- coding:utf-8--
+
 from flask import request, render_template, send_file
-from view._app import app, getLogger, conversion
+from view._app import app, getLogger, conversion, config
 import datetime
 import base64
 import io
 import json
+import urllib.parse
 
 
 @app.route('/')
@@ -15,10 +19,6 @@ def index():
 def entry_js():
     cid = request.args.get('cid')
     filename = 'user_js/' + str(cid) + '.js'
-
-    # ignore対象か調べる
-    with open('config.json', 'r') as f:
-        cfg = json.load(f)
 
     with open(filename, 'r') as f:
         js = f.read()
@@ -37,6 +37,15 @@ def entry_js():
 
 @app.route('/entry')
 def entry():
+    gif = 'R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw =='
+    gif_str = base64.b64decode(gif)
+
+    url = urllib.parse.urlparse(request.args.get('url'))
+    print(config['ignorepage'])
+    print(url.path)
+    if url.path in config['ignorepage']:
+        return send_file(io.BytesIO(gif_str), mimetype='image/gif')
+
     ip = request.remote_addr
     query = ''
     for a in request.args:
@@ -51,7 +60,4 @@ def entry():
     # ログ出力
     logger = getLogger(__name__, 'entry.log')
     logger.info('{0:%Y/%m/%d %H:%M:%S} - '.format(now) + ip + ' - ' + query)
-
-    gif = 'R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw =='
-    gif_str = base64.b64decode(gif)
     return send_file(io.BytesIO(gif_str), mimetype='image/gif')
