@@ -3,6 +3,7 @@ from view._app import app, getLogger, conversion
 import datetime
 import base64
 import io
+import json
 
 
 @app.route('/')
@@ -14,6 +15,11 @@ def index():
 def entry_js():
     cid = request.args.get('cid')
     filename = 'user_js/' + str(cid) + '.js'
+
+    # ignore対象か調べる
+    with open('config.json', 'r') as f:
+        cfg = json.load(f)
+
     with open(filename, 'r') as f:
         js = f.read()
 
