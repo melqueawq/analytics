@@ -30,7 +30,7 @@ def getLogger(name=__name__, filename=None):
 
 def conversion(conv):
     # jsonかdbでとる
-    now = str(datetime.datetime.now())
+    now = str(datetime.datetime.now().strftime('%Y-%m-%d'))
 
     cvdata = {}
     if os.path.exists("conversion.json"):
