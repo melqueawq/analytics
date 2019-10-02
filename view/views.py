@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-# -- coding:utf-8--
+# -*- coding:utf-8-*-
 
 from flask import request, render_template, send_file
-from view._app import app, getLogger, conversion, config
+from view._app import app, getLogger, conversion, campaign, config
 import datetime
 import base64
 import io
@@ -41,10 +41,12 @@ def entry():
     gif_str = base64.b64decode(gif)
 
     url = urllib.parse.urlparse(request.args.get('url'))
-    print(config['ignorepage'])
-    print(url.path)
     if url.path in config['ignorepage']:
         return send_file(io.BytesIO(gif_str), mimetype='image/gif')
+
+    urlqs = urllib.parse.parse_qs(url.query)
+    if 'ad' in urlqs:
+        campaign(urlqs['ad'], request.args.get('ref'))
 
     ip = request.remote_addr
     query = ''

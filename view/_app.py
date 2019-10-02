@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -- coding:utf-8--
+# -*- coding:utf-8-*-
 
 from flask import Flask
 import logging
@@ -40,3 +40,11 @@ def conversion(conv):
 
     logger = getLogger('conv', 'conv.log')
     logger.info('{0:%Y/%m/%d %H:%M:%S} - '.format(now) + conv)
+
+
+def campaign(adid, ref):
+    now = datetime.datetime.now()
+    print(adid)
+    logger = getLogger('campaign', 'campaign.log')
+    logger.info('{0:%Y/%m/%d %H:%M:%S} - '.format(now) +
+                str(adid) + ' - ' + str(ref))
