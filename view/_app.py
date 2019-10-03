@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-# -*- coding:utf-8-*-
+# -*- coding:utf-8 -*-
 
 from flask import Flask
 import logging
 import json
-import os
 import datetime
+import urllib
 
 app = Flask(__name__, template_folder='../templates',
             static_folder="../static")
@@ -34,17 +34,22 @@ def getLogger(name=__name__, filename=None):
     return logger
 
 
-def conversion(conv):
-    # jsonかdbでとる
+def conversion(request):
     now = datetime.datetime.now()
+    ip = request.remote_addr
+    conv = request.args.get('param')
+    url = urllib.parse.unquote(request.url)
 
     logger = getLogger('conv', 'conv.log')
-    logger.info('{0:%Y/%m/%d %H:%M:%S} - '.format(now) + conv)
-
-
-def campaign(adid, ref):
-    now = datetime.datetime.now()
-    print(adid)
-    logger = getLogger('campaign', 'campaign.log')
     logger.info('{0:%Y/%m/%d %H:%M:%S} - '.format(now) +
-                str(adid) + ' - ' + str(ref))
+                ip + ' - ' + conv + ' - ' + url)
+
+
+def campaign(adid, request):
+    now = datetime.datetime.now()
+    url = request.args.get('url')
+    ref = request.args.get('ref')
+
+    logger = getLogger('campaign', 'campaign.log')
+    logger.info('{0:%Y/%m/%d %H:%M:%S} - '.format(now)
+                + str(adid) + ' - ' + url + ' - ' + ref)

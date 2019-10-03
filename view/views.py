@@ -1,12 +1,11 @@
 #!/usr/bin/env python
-# -*- coding:utf-8-*-
+# -*- coding:utf-8 -*-
 
 from flask import request, render_template, send_file
 from view._app import app, getLogger, conversion, campaign, config
 import datetime
 import base64
 import io
-import json
 import urllib.parse
 
 
@@ -25,7 +24,8 @@ def entry_js():
 
         js += 'image.src = location.protocol + "//127.0.0.1:5000/entry?"' \
             + ' + "cid=" + "1" + "&time=" + now.getTime()' \
-            + ' + "&url=" + window.location + "&ref=" + document.referrer'
+            + ' + "&url=" + String(window.location).replace("&", "*")' \
+            + ' + "&ref=" + String(document.referrer).replace("&", "*")'
 
         if('p' in request.args):
             js += '+ "&param=' + str(request.args.get('p')) + '"'
@@ -37,27 +37,33 @@ def entry_js():
 
 @app.route('/entry')
 def entry():
+    # 1x1GIF
     gif = 'R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw =='
     gif_str = base64.b64decode(gif)
 
     url = urllib.parse.urlparse(request.args.get('url'))
+
+    # 拒否
     if url.path in config['ignorepage']:
         return send_file(io.BytesIO(gif_str), mimetype='image/gif')
 
-    urlqs = urllib.parse.parse_qs(url.query)
-    if 'ad' in urlqs:
-        campaign(urlqs['ad'], request.args.get('ref'))
+    url_qs = urllib.parse.parse_qs(url.query.replace('*', '&'))
+    print(url_qs)
+    # キャンペーン
+    if 'ad' in url_qs:
+        campaign(url_qs['ad'], request)
+        pass
 
-    ip = request.remote_addr
+    # コンバージョン
+    if 'param' in request.args:
+        conversion(request)
+
     query = ''
     for a in request.args:
-        query += request.args.get(a) + '*'
+        query += request.args.get(a) + ' '
 
-    if 'param' in request.args:
-        conversion(request.args.get('param'))
-
-    # 時刻取得
     now = datetime.datetime.now()
+    ip = request.remote_addr
 
     # ログ出力
     logger = getLogger(__name__, 'entry.log')
