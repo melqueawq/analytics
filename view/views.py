@@ -49,14 +49,13 @@ def entry():
 
     url_qs = urllib.parse.parse_qs(url.query.replace('*', '&'))
     print(url_qs)
-    # キャンペーン
-    if 'ad' in url_qs:
-        campaign(url_qs['ad'], request)
-        pass
 
     # コンバージョン
     if 'param' in request.args:
         conversion(request)
+        # キャンペーン
+        if 'ad' in url_qs:
+            campaign(url_qs['ad'], request)
 
     query = ''
     for a in request.args:

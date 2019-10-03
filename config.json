@@ -1,3 +1,9 @@
 {
-  "ignorepage": ["/static/html/ignore.html"]
+    "ignorepage": ["/static/html/ignore.html"],
+    "campaign": {
+        "1": {
+            "cv": "cv01",
+            "ad": "01"
+        }
+    }
 }

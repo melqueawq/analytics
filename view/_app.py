@@ -49,7 +49,10 @@ def campaign(adid, request):
     now = datetime.datetime.now()
     url = request.args.get('url')
     ref = request.args.get('ref')
+    conv = request.args.get('param')
 
-    logger = getLogger('campaign', 'campaign.log')
-    logger.info('{0:%Y/%m/%d %H:%M:%S} - '.format(now)
-                + str(adid) + ' - ' + url + ' - ' + ref)
+    for v in config['campaign'].values():
+        if v['ad'] in adid:
+            logger = getLogger('campaign', 'campaign.log')
+            logger.info('{0:%Y/%m/%d %H:%M:%S} - '.format(now) +
+                        str(adid) + ' - ' + url + ' - ' + ref)
