@@ -12,11 +12,14 @@ app = Flask(__name__, template_folder='../templates',
 
 loggers = {}
 
+# 設定ファイル読み込み
 with open('config.json', 'r') as f:
     config = json.load(f)
 
 
 def getLogger(name=__name__, filename=None):
+    # 任意のLoggerを取得
+
     global loggers
 
     if loggers.get(name):
@@ -35,6 +38,8 @@ def getLogger(name=__name__, filename=None):
 
 
 def conversion(request):
+    # コンバージョンをログに保存
+
     now = datetime.datetime.now()
     ip = request.remote_addr
     conv = request.args.get('param')
@@ -46,13 +51,17 @@ def conversion(request):
 
 
 def campaign(adid, request):
+    # 広告流入をログに保存
+
     now = datetime.datetime.now()
     url = request.args.get('url')
     ref = request.args.get('ref')
+    conv = request.args.get('param')
 
     # 媒体が定義されていれば処理
-    for v in config['campaign'].values():
-        if v['ad'] in adid:
+    for v in config['campaign']:
+        if v['ad'] == adid and v['cv'] == conv:
             logger = getLogger('campaign', 'campaign.log')
             logger.info('{0:%Y/%m/%d %H:%M:%S} - '.format(now) +
-                        str(adid) + ' - ' + url + ' - ' + ref)
+                        str(v['id']) + ' - ' + v['ad'] + ' - ' +
+                        url + ' ' + ref)

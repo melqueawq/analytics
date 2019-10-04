@@ -21,21 +21,27 @@ def entry_js():
     cid = request.args.get('cid')
     filename = 'user_js/' + str(cid) + '.js'
 
+    # cookieからuid読み出し
     uid = request.cookies.get('uid', None)
 
-    # uidがcookieに無かったらjsonに新規登録
+    # uidがなければ作成
     if not uid:
-        try:
-            with open('member.json', 'r') as f:
-                j = json.load(f)
-        except FileNotFoundError:
-            j = {}
+        uid = '{0:.0f}'.format(time.time()*100)
 
+    # uidを保存しているファイル読み出し
+    try:
+        with open('member.json', 'r') as f:
+            j = json.load(f)
+    except FileNotFoundError:
+        j = {}
+
+    # cidが登録されていなければ作成
+    if cid not in j:
+        j[cid] = []
+
+    # uidがデータ内に含まれていなければ追加
+    if uid not in j[cid]:
         with open('member.json', 'w') as f:
-            uid = '{0:.0f}'.format(time.time()*100)
-            if cid not in j:
-                j[cid] = []
-
             j[cid].append(uid)
             json.dump(j, f, indent=2)
 
@@ -77,13 +83,13 @@ def entry():
     # コンバージョン
     if 'param' in request.args:
         conversion(request)
-        # キャンペーン
+        # 媒体
         if 'ad' in url_qs:
-            campaign(url_qs['ad'], request)
+            campaign(url_qs['ad'][0], request)
 
     query = ''
     for a in request.args:
-        query += request.args.get(a) + ' '
+        query += request.args.get(a) + ', '
 
     now = datetime.datetime.now()
     ip = request.remote_addr
