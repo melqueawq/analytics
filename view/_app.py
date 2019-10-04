@@ -65,3 +65,22 @@ def campaign(adid, request):
             logger.info('{0:%Y/%m/%d %H:%M:%S} - '.format(now) +
                         str(v['id']) + ' - ' + v['ad'] + ' - ' +
                         url + ' ' + ref)
+
+
+def uid_entry(cid, uid):
+    # uidを保存しているファイル読み出し
+    try:
+        with open('member.json', 'r') as f:
+            j = json.load(f)
+    except FileNotFoundError:
+        j = {}
+
+    # cidが登録されていなければ作成
+    if cid not in j:
+        j[cid] = []
+
+    # uidがデータ内に含まれていなければ追加
+    if uid not in j[cid]:
+        with open('member.json', 'w') as f:
+            j[cid].append(uid)
+            json.dump(j, f, indent=2)

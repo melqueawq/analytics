@@ -2,13 +2,12 @@
 # -*- coding:utf-8 -*-
 
 from flask import request, render_template, send_file
-from view._app import app, getLogger, conversion, campaign, config
+from view._app import app, getLogger, conversion, campaign, config, uid_entry
 import datetime
 import base64
 import io
 import urllib.parse
 import time
-import json
 
 
 @app.route('/')
@@ -28,22 +27,8 @@ def entry_js():
     if not uid:
         uid = '{0:.0f}'.format(time.time()*100)
 
-    # uidを保存しているファイル読み出し
-    try:
-        with open('member.json', 'r') as f:
-            j = json.load(f)
-    except FileNotFoundError:
-        j = {}
-
-    # cidが登録されていなければ作成
-    if cid not in j:
-        j[cid] = []
-
-    # uidがデータ内に含まれていなければ追加
-    if uid not in j[cid]:
-        with open('member.json', 'w') as f:
-            j[cid].append(uid)
-            json.dump(j, f, indent=2)
+    # uidを登録
+    uid_entry(cid, uid)
 
     with open(filename, 'r') as f:
         js = f.read()
