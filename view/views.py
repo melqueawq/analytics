@@ -7,6 +7,8 @@ import datetime
 import base64
 import io
 import urllib.parse
+import time
+import json
 
 
 @app.route('/')
@@ -19,13 +21,36 @@ def entry_js():
     cid = request.args.get('cid')
     filename = 'user_js/' + str(cid) + '.js'
 
+    uid = request.cookies.get('uid', None)
+
+    # uidがcookieに無かったらjsonに新規登録
+    if not uid:
+        try:
+            with open('member.json', 'r') as f:
+                j = json.load(f)
+        except FileNotFoundError:
+            j = {}
+
+        with open('member.json', 'w') as f:
+            uid = '{0:.0f}'.format(time.time()*100)
+            if cid not in j:
+                j[cid] = []
+
+            j[cid].append(uid)
+            json.dump(j, f, indent=2)
+
     with open(filename, 'r') as f:
         js = f.read()
 
+        # uidを置き換え
+        js = js.replace('[!uid]', uid)
+
+        # 画像にタグ埋め込み
         js += 'image.src = location.protocol + "//127.0.0.1:5000/entry?"' \
             + ' + "cid=" + "1" + "&time=" + now.getTime()' \
             + ' + "&url=" + String(window.location).replace("&", "*")' \
-            + ' + "&ref=" + String(document.referrer).replace("&", "*")'
+            + ' + "&ref=" + String(document.referrer).replace("&", "*")' \
+            + ' + "&uid=" + uid'
 
         if('p' in request.args):
             js += '+ "&param=' + str(request.args.get('p')) + '"'
@@ -48,7 +73,6 @@ def entry():
         return send_file(io.BytesIO(gif_str), mimetype='image/gif')
 
     url_qs = urllib.parse.parse_qs(url.query.replace('*', '&'))
-    print(url_qs)
 
     # コンバージョン
     if 'param' in request.args:

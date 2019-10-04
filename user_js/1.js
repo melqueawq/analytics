@@ -1,6 +1,6 @@
 function setCookie() {
     document.cookie =
-        "analytics=1234; path=/; expires=Thu, 1-Jan-2030 00:00:00 GMT;";
+        "uid=[!uid]; path=/; expires=Thu, 1-Jan-2030 00:00:00 GMT;";
 }
 
 function getCookie(name) {
@@ -16,6 +16,8 @@ function getCookie(name) {
 
 let now = new Date();
 let image = new Image(1, 1);
+
+let uid = [!uid]
 
 if (!getCookie("uid")) {
     setCookie();

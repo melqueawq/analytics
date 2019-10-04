@@ -49,8 +49,8 @@ def campaign(adid, request):
     now = datetime.datetime.now()
     url = request.args.get('url')
     ref = request.args.get('ref')
-    conv = request.args.get('param')
 
+    # 媒体が定義されていれば処理
     for v in config['campaign'].values():
         if v['ad'] in adid:
             logger = getLogger('campaign', 'campaign.log')
