@@ -8,6 +8,7 @@ import base64
 import io
 import urllib.parse
 import time
+import sys
 
 
 @app.route('/')
@@ -66,11 +67,12 @@ def entry():
     url_qs = urllib.parse.parse_qs(url.query.replace('*', '&'))
 
     # コンバージョン
-    if 'param' in request.args:
-        conversion(request)
-        # 媒体
-        if 'ad' in url_qs:
-            campaign(url_qs['ad'][0], request)
+    if '--debug' in sys.argv:
+        if 'param' in request.args:
+            conversion(request)
+            # 媒体
+            if 'ad' in url_qs:
+                campaign(url_qs['ad'][0], request)
 
     query = ''
     for a in request.args:
