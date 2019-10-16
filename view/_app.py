@@ -2,13 +2,22 @@
 # -*- coding:utf-8 -*-
 
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 import logging
 import json
 import datetime
 import urllib
+import os
 
 app = Flask(__name__, template_folder='../templates',
             static_folder="../static")
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+    'DATABASE_URL') or "sqlite:///data.db"
+app.config['SQLALCHEMY_TRUCK_MODIFICATIONS'] = True
+
+db = SQLAlchemy(app)
+Migrate(app, db)
 
 loggers = {}
 
