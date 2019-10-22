@@ -2,7 +2,9 @@
 # -*- coding:utf-8 -*-
 
 from flask import request, render_template, send_file
-from view._app import app, getLogger, conversion, campaign, config, uid_entry
+from ._app import (app, getLogger, conversion, campaign,
+                   config, uid_entry, db)
+from .models import LogTable
 import datetime
 import base64
 import io
@@ -84,4 +86,16 @@ def entry():
     # ログ出力
     logger = getLogger(__name__, 'entry.log')
     logger.info('{0:%Y/%m/%d %H:%M:%S} - '.format(now) + ip + ' - ' + query)
+
+    # DB保存
+    row = LogTable(
+        cid=request.args.get('cid'),
+        uid=request.args.get('uid'),
+        ip=ip,
+        url=request.args.get('url'),
+        referrer=request.args.get('ref'),
+        param=request.args.get('param') if 'param' in request.args else None
+    )
+    LogTable.save_to_db(row)
+
     return send_file(io.BytesIO(gif_str), mimetype='image/gif')

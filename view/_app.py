@@ -26,6 +26,12 @@ with open('config.json', 'r') as f:
     config = json.load(f)
 
 
+@app.before_first_request
+def create_tables():
+    from .models import LogTable
+    db.create_all()
+
+
 def getLogger(name=__name__, filename=None):
     # 任意のLoggerを取得
 
